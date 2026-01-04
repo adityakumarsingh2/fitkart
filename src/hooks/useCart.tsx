@@ -141,16 +141,13 @@ export const useCart = () => {
             // 1. Create Stripe Checkout Session
             const { data: sessionData, error: sessionError } = await supabase.functions.invoke('create-stripe-checkout', {
                 body: {
-                    items: cartQuery.data.map(item => ({
-                        product: {
-                            name: item.product?.name,
-                            price: item.product?.price,
-                            images: item.product?.images,
-                        },
+                    userEmail: user.email,
+                    cartItems: cartQuery.data.map(item => ({
+                        name: item.product?.name,
+                        image: item.product?.images?.[0], // Send first image
+                        price: item.product?.price,
                         quantity: item.quantity,
                     })),
-                    successUrl: `${window.location.origin}/checkout/success`,
-                    cancelUrl: `${window.location.origin}/checkout/cancel`,
                 },
             });
 

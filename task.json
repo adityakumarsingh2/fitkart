@@ -1,0 +1,8 @@
+# Task: Configuration and Stripe Integration
+
+- [] Create and configure `.env` file <!-- id: 0 -->
+- [/
+] Obtain missing credentials (`VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_STRIPE_PUBLISHABLE_KEY`) <!-- id: 1 -->
+- [] Implement `create-stripe-checkout` Edge Function <!-- id: 2 -->
+- [] Implement Frontend Stripe Integration (`useCart.tsx`, `CheckoutSuccess.tsx`, `CheckoutCancel.tsx`) <!-- id: 3 -->
+- [] Verify Stripe Payment Flow <!-- id: 4 -->

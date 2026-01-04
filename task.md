@@ -1,13 +1,9 @@
-# Tasks
+# Task: Supabase Fix & Stripe Integration
 
-- [x] Plan Weight/Height Integration in Try-On
-    - [x] Create implementation plan
-- [x] Update Try-On Page
-    - [x] Add weight/height input dialog (shown once if not in profile)
-    - [x] Update profile when user provides weight/height
-    - [x] Create size recommendation algorithm
-    - [x] Add fitting tips based on measurements
-- [/] Verify Implementation
-    - [/] Test weight/height prompt flow
-    - [/] Verify profile updates
-    - [/] Test size recommendations
+- [x] Create `.env` file with Supabase URL & Anon Key <!-- id: 0 -->
+- [ ] Implement `create-stripe-checkout` Edge Function <!-- id: 1 -->
+- [ ] Update `useCart.tsx` to use Stripe Checkout <!-- id: 2 -->
+- [ ] Create `CheckoutSuccess.tsx` <!-- id: 3 -->
+- [ ] Create `CheckoutCancel.tsx` <!-- id: 4 -->
+- [ ] Add routes to `App.tsx` <!-- id: 5 -->
+- [ ] Verify Stripe Payment Flow <!-- id: 6 -->
