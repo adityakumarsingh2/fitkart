@@ -131,6 +131,22 @@ export const useCart = () => {
             toast.success('Removed from cart');
         },
     });
+    const clearCart = useMutation({
+        mutationFn: async () => {
+            if (!user) return;
+            const { error } = await supabase
+                .from('cart_items')
+                .delete()
+                .eq('user_id', user.id);
+            if (error) throw error;
+            // Also clear local sync if needed, though supabase delete might trigger local changes if synced properly?
+            // For now, no direct localSync clear exposed, but this effectively clears server state.
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['cart'] });
+        },
+    });
+
     const checkout = useMutation({
         mutationFn: async () => {
             if (!user)
@@ -144,7 +160,7 @@ export const useCart = () => {
                     userEmail: user.email,
                     cartItems: cartQuery.data.map(item => ({
                         name: item.product?.name,
-                        image: item.product?.images?.[0], // Send first image
+                        image: item.product?.images?.[0],
                         price: item.product?.price,
                         quantity: item.quantity,
                     })),
@@ -155,16 +171,8 @@ export const useCart = () => {
                 throw sessionError;
             if (!sessionData?.url)
                 throw new Error('Failed to create checkout session');
-            // 2. Clear the cart (we do this pre-redirect for simplicity in this demo, 
-            // but ideally you'd use a webhook to handle this after payment confirmation)
-            const { error: clearError } = await supabase
-                .from('cart_items')
-                .delete()
-                .eq('user_id', user.id);
-            if (clearError)
-                throw clearError;
-            // 3. Create the order as 'pending'
-            // 3. Create the order as 'pending'
+
+            // 2. Create the order as 'pending'
             const orderTotal = Math.round(cartTotal * 1.1);
             const { data: order, error: orderError } = await supabase
                 .from('orders')
@@ -190,12 +198,12 @@ export const useCart = () => {
             if (order) {
                 await localSync.syncOrder(order);
             }
-            // 4. Redirect to Stripe
+            // 3. Redirect to Stripe
             window.location.href = sessionData.url;
             return sessionData;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
+            // queryClient.invalidateQueries({ queryKey: ['cart'] }); // Don't clear cart query on checkout init
             queryClient.invalidateQueries({ queryKey: ['orders'] });
         },
         onError: (error) => {
@@ -213,6 +221,7 @@ export const useCart = () => {
         addToCart,
         updateQuantity,
         removeFromCart,
+        clearCart: clearCart.mutate,
         checkout,
         cartTotal,
         cartCount,
